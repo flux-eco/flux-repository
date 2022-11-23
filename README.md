@@ -1,2 +1,2 @@
 # flux-eco-repository
-[](/repository/docs/api.png)
+[](/docs/api.png)
