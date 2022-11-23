@@ -1,0 +1,27 @@
+{
+  "processes": {
+    "fetchData": {
+      "on": "{$applicationName}/repository/fetchData",
+      "publishTo": {
+        "location": "{$message.payload}#/next/address"
+      },
+      "action": "fetchData",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "dataAddress": {
+            "type": "string"
+          },
+          "next": {
+            "address": {
+              "type": "string"
+            },
+            "payload": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  }
+}
