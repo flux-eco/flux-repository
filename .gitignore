@@ -1,5 +1,6 @@
 /*
 !.gitignore
-!.docs
+!examples
+!docs
 !definitions
 !src

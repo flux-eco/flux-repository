@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./main.mjs" type="module"></script>
+    <title></title>
+</head>
+
+<body>
+    <button onclick="getDataFromRepository()">get data</button>
+
+    <script>
+        const dataFetched = new BroadcastChannel('example-app/publishDataHere');
+        dataFetched.addEventListener('message', messageEvent => {
+            alert(JSON.stringify(messageEvent.data));
+        });
+
+        function getDataFromRepository() {
+            const channel = new BroadcastChannel('example-app/repository/fetchData');
+            channel.postMessage(
+                {
+                    "dataAddress": 'person.json',
+                    "next": {
+                        "address": 'example-app/publishDataHere',
+                        "payload": {
+                            'born': '2053'
+                        }
+                    }
+                }
+            );
+        }
+    </script>
+
+</body>
