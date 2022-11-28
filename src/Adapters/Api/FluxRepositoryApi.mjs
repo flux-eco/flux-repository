@@ -17,6 +17,10 @@ export default class FluxRepositoryApi {
   #messageStream;
   /** @var {Definitions} */
   #definitions;
+  /** @var {string} */
+  #projectionApiBaseUrl;
+  /** @var {string} */
+  #projectCurrentUserAddress;
 
   /**
    * @private
@@ -28,15 +32,19 @@ export default class FluxRepositoryApi {
 
   /**
    * @param {Config} config
-   * @return {void}
+   * @return {FluxRepositoryApi}
    */
   static async initializeOfflineFirstRepository(config) {
     const obj = new FluxRepositoryApi(config.applicationName);
     obj.#messageStream = await MessageStream.new(obj.#actorName, config.logEnabled, obj.#actorColor);
     await obj.#initDefinitions(config.definitionsBaseUrl);
-    await obj.#initReactors();
-    await obj.#initActor(await OfflineFirstStorage.new(obj.#actorName, config.projectionApiBaseUrl))
+    obj.#projectionApiBaseUrl = config.projectionApiBaseUrl;
+    await obj.#initOperations();
+    obj.#projectCurrentUserAddress = config.projectCurrentUserAddress;
+    return obj;
   }
+
+
 
   /**
    * @param {string} definitionBaseUrl
@@ -46,8 +54,9 @@ export default class FluxRepositoryApi {
     this.#definitions = await Definitions.new(definitionBaseUrl)
   }
 
-  async #initActor(storage) {
-    this.#actor = await Actor.new(this.#actorName, (publishTo, payload) => {
+  async initActor() {
+    const storage = await OfflineFirstStorage.new(this.#actorName, this.#projectionApiBaseUrl)
+    this.#actor = await Actor.new(this.#actorName, this.#projectCurrentUserAddress, (publishTo, payload) => {
         this.#publish(
             publishTo,
             payload
@@ -57,21 +66,24 @@ export default class FluxRepositoryApi {
     );
   }
 
-  async #initReactors() {
+  async #initOperations() {
     const apiDefinition = await this.#definitions.apiDefinition();
-    Object.entries(apiDefinition.processes).forEach(([reactionId, reaction]) => {
-      const onAddress = reaction.on
+    Object.entries(apiDefinition.operations).forEach(([operationId, operation]) => {
+      const onAddress = operation.on.address
       const address = onAddress.replace('{$applicationName}', this.#applicationName);
-      this.#messageStream.register(address, (payload) => this.#reaction(reaction.action, payload), reaction.payload)
+      this.#messageStream.register(address, (payload) => this.#handle(operation.handles, payload))
     });
   }
 
-  async #reaction(action, payload) {
+  async #handle(command, payload) {
+    if(payload === null) {
+      return;
+    }
     try {
-      this.#actor[action](payload);
+      this.#actor[command](payload);
     }
     catch (e) {
-      console.error(action + " " + e)
+      console.error(command + " " + e)
     }
   }
 

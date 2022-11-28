@@ -3,7 +3,7 @@ const applicationName = "example-app"
 const backendBaseUrl = window.location + "./any-backend";
 const definitionsBaseUrl = window.location + "../../definitions";
 
-await FluxRepositoryApi.initializeOfflineFirstRepository(
+const repository = await FluxRepositoryApi.initializeOfflineFirstRepository(
     {
         applicationName: applicationName,
         logEnabled: true,
@@ -11,3 +11,4 @@ await FluxRepositoryApi.initializeOfflineFirstRepository(
         projectionApiBaseUrl: backendBaseUrl
     },
 );
+repository.initActor();

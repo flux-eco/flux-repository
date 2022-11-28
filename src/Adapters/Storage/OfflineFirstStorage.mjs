@@ -24,11 +24,26 @@ export class OfflineFirstStorage {
 
   /**
    * @param {string} address
+   * @param {object} entityFilter
    * @param {function(jsonObject: string)} replyTo
    */
-  async get(address, replyTo) {
+  async get(address,entityFilter = null, replyTo) {
+    if(address === undefined) {
+      return;
+    }
+
     const dataCacheName = this.#name;
+
+    if (entityFilter) {
+      Object.entries(entityFilter).forEach(([key, value]) => {
+        if(key && value) {
+          address = address + "/" + key + "/" + value
+        }
+      })
+    }
+
     const src = this.#onlineApiBaseUrl + "/" + address;
+
     const cache = await caches.open(dataCacheName);
     const cache_response = await cache.match(address) ?? null;
     let cacheData = null;

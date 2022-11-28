@@ -1,24 +1,36 @@
 {
-  "processes": {
+  "operations": {
     "fetchData": {
-      "on": "{$applicationName}/repository/fetchData",
-      "publishTo": {
-        "location": "{$message.payload}#/next/address"
-      },
-      "action": "fetchData",
-      "payload": {
-        "type": "object",
-        "properties": {
-          "dataAddress": {
-            "type": "string"
-          },
-          "next": {
-            "address": {
-              "type": "string"
-            },
-            "payload": {
-              "type": "object"
+      "on": {
+        "address": "{$applicationName}/repository/fetchData",
+        "message": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "dataAddress": {
+                "type": "string"
+              },
+              "next": {
+                "address": {
+                  "type": "string"
+                },
+                "payload": {
+                  "type": "object"
+                }
+              }
             }
+          }
+        }
+      },
+      "handles": "fetchData",
+      "publishes": {
+        "address": {
+          "location": "{$message.payload}#/next/address"
+        },
+        "message": {
+          "merge": "{$message.payload}#/next/payload",
+          "payload": {
+            "type": "object"
           }
         }
       }

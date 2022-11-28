@@ -46,9 +46,8 @@ export default class MessageStream {
   /**
    * @param {string} on
    * @param {function} callbackAction
-   * @param {object} payloadDefinition
    */
-  register(on, callbackAction, payloadDefinition) {
+  register(on, callbackAction) {
     const channel = new BroadcastChannel(on);
     channel.addEventListener('message', messageEvent => {
       callbackAction(messageEvent.data);
@@ -60,8 +59,6 @@ export default class MessageStream {
       console.log('%c' + this.#actorName, this.#styleRegister);
       console.log('has registered a callbackFunction. He will react in future on messages send to:')
       console.log('%c' + on, this.#styleRegister);
-      console.log('...with payload:')
-      console.log('%c' + JSON.stringify(payloadDefinition), this.#styleRegister)
       console.groupEnd()
     }
   }

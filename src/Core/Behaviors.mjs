@@ -1,6 +1,8 @@
 /**
  * @typedef {{dataAddress: string, addressParameter: object, next: {address: string, payload: { }}}} FetchData
- * @typedef {{name: string}} CreatedEvent
+ * @typedef {{address: string}} ChangeCurrentUser
+ * @typedef {{id: string, email: string}} CurrentUserChangedEvent
+ * @typedef {{name: string, projectCurrentUserAddress: string}} CreatedEvent
  * @typedef {{publishTo: string, payload: {}} } DataChangedEvent
  */
 
@@ -12,10 +14,11 @@ class Event {
 
 /**
  * @param {string} name
+ * @param {string} projectCurrentUserAddress
  * @return {CreatedEvent}
  */
-export const created = function (name) {
-    return new Event({name: name}).event
+export const created = function (name, projectCurrentUserAddress) {
+    return new Event({name: name, projectCurrentUserAddress: projectCurrentUserAddress}).event
 }
 
 /**
@@ -23,4 +26,11 @@ export const created = function (name) {
  */
 export const dataChanged = function (publishTo, payload) {
     return new Event({publishTo: publishTo, payload: payload}).event
+}
+
+/**
+ * @return {CurrentUserChangedEvent}
+ */
+export const currentUserChanged = function (id, email) {
+    return new Event({id: id, email: email}).event
 }
