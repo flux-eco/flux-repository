@@ -54,6 +54,9 @@ export default class FluxRepositoryApi {
     this.#definitions = await Definitions.new(definitionBaseUrl)
   }
 
+  /**
+   * @return {void}
+   */
   async initActor() {
     const storage = await OfflineFirstStorage.new(this.#actorName, this.#projectionApiBaseUrl)
     this.#actor = await Actor.new(this.#actorName, this.#projectCurrentUserAddress, (publishTo, payload) => {
