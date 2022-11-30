@@ -78,8 +78,8 @@ export default class Actor {
       entityFilter, //todo rename
       (json) => {
         this.#applyDataChanged(dataChanged(payload.next.address, {
+          ...json,
           ...payload.next.payload,
-          ...json
         }))
       }
     )
