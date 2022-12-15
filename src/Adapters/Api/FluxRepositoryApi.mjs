@@ -31,7 +31,7 @@ export default class FluxRepositoryApi {
   }
 
   /**
-   * @param {Config} config
+   * @param {FluxLayoutConfig} config
    * @return {FluxRepositoryApi}
    */
   static async initializeOfflineFirstRepository(config) {
@@ -71,19 +71,19 @@ export default class FluxRepositoryApi {
 
   async #initOperations() {
     const apiDefinition = await this.#definitions.apiDefinition();
-    Object.entries(apiDefinition.operations).forEach(([operationId, operation]) => {
-      const onAddress = operation.on.address
-      const address = onAddress.replace('{$applicationName}', this.#applicationName);
-      this.#messageStream.register(address, (payload) => this.#handle(operation.handles, payload))
+    Object.entries(apiDefinition.tasks).forEach(([taskName, task]) => {
+      const addressDefinition = task.address
+      const address = addressDefinition.replace('{$applicationName}', this.#applicationName);
+      this.#messageStream.register(address, (value) => this.#handle(task.onResult, value))
     });
   }
 
-  async #handle(command, payload) {
-    if(payload === null) {
+  async #handle(command, value) {
+    if(value === null) {
       return;
     }
     try {
-      this.#actor[command](payload);
+      this.#actor[command](value);
     }
     catch (e) {
       console.error(command + " " + e)
@@ -92,15 +92,15 @@ export default class FluxRepositoryApi {
 
   /**
    * @param {string} publishTo
-   * @param {object} payload
+   * @param {object} resultValue
    * @return {Promise<void>}
    */
   async #publish(
-      publishTo, payload
+      publishTo, resultValue
   ) {
     if(publishTo.includes('{$applicationName}')) {
       publishTo.replace('{$applicationName}', this.#applicationName);
     }
-    this.#messageStream.publish(publishTo, payload)
+    this.#messageStream.publish(publishTo, resultValue)
   }
 }

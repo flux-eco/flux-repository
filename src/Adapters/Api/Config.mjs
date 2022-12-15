@@ -1,5 +1,5 @@
 /**
- * @interface Config
+ * @interface FluxLayoutConfig
  * @typedef {Object} FluxRepositoryApiConfig
  * @property {String} applicationName
  * @property {boolean} logEnabled

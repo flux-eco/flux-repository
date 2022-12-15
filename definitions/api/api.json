@@ -1,36 +1,35 @@
 {
-  "operations": {
+  "tasks": {
     "fetchData": {
-      "on": {
-        "address": "{$applicationName}/repository/fetchData",
-        "message": {
-          "payload": {
+      "name": "fetchData",
+      "address": "{$applicationName}/repository/fetchData",
+      "valueType": "object",
+      "valueSchema": {
+        "type": "object",
+        "properties": {
+          "dataAddress": {
+            "type": "string"
+          },
+          "next": {
             "type": "object",
             "properties": {
-              "dataAddress": {
+              "address": {
                 "type": "string"
               },
-              "next": {
-                "address": {
-                  "type": "string"
-                },
-                "payload": {
-                  "type": "object"
-                }
+              "value": {
+                "type": "object"
               }
             }
           }
-        }
-      },
-      "handles": "fetchData",
-      "publishes": {
-        "address": {
-          "location": "{$message.payload}#/next/address"
         },
-        "message": {
-          "merge": "{$message.payload}#/next/payload",
-          "payload": {
-            "type": "object"
+        "onResult": {
+          "name": "dataFetched",
+          "address": {
+            "location": "{$task.value}#/next/address"
+          },
+          "valueType": "object",
+          "value": {
+            "merge": "{$task.value}#/next/payload"
           }
         }
       }
